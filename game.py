@@ -126,16 +126,16 @@ def draw():
     canvas.create_rectangle(food.x, food.y, food.x + TITLE_SIZE, food.y + TITLE_SIZE, fill = "red")
 
     #draw snake
-    canvas.create_rectangle(snake.x, snake.y, snake.x + TITLE_SIZE, snake.y + TITLE_SIZE, fill = "lime green")
+    canvas.create_rectangle(snake.x, snake.y, snake.x + TITLE_SIZE, snake.y + TITLE_SIZE, fill = "plum")
 
     for tile in snake_body:
-        canvas.create_rectangle(tile.x, tile.y, tile.x + TITLE_SIZE, tile.y + TITLE_SIZE, fill = "lime green" )
+        canvas.create_rectangle(tile.x, tile.y, tile.x + TITLE_SIZE, tile.y + TITLE_SIZE, fill = "plum" )
     
     if (game_over):
-        canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - 10, font="Arial 20", text=f"Game Over: {score}", fill="white")
-        canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 20, font="Arial 14", text="Press 'R' to Restart", fill="white")
+        canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 - 10, font=("Courier New", 20, "bold"), text=f"Game Over: {score}", fill="white")
+        canvas.create_text(WINDOW_WIDTH/2, WINDOW_HEIGHT/2 + 20, font=("Courier New", 14, "bold"), text="Press 'R' to Restart", fill="white")
     else:
-        canvas.create_text(30, 20, font = "Arial 10", text = f"Score: {score}", fill = "white")   
+        canvas.create_text(30, 20, font = ("Courier New", 10, "bold"), text = f"Score: {score}", fill = "white")   
 
     window.after(100, draw) #100ms = 1/10 second, 10 frames/second
 
