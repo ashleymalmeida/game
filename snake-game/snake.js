@@ -15,6 +15,9 @@ let velocityY = 0;
 let score = 0;
 let gameOver = false;
 
+
+
+
 function randomTile() {
   return {
     x: Math.floor(Math.random() * COLS) * TITLE_SIZE,
@@ -34,6 +37,12 @@ function resetGame() {
 
 document.addEventListener("keydown", (e) => {
   const key = e.key;
+
+  // Prevent scrolling with arrow keys
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(key)) {
+    e.preventDefault();
+  }
+
   if (gameOver && key.toLowerCase() === "r") {
     resetGame();
     return;
@@ -54,6 +63,7 @@ document.addEventListener("keydown", (e) => {
     velocityY = 0;
   }
 });
+
 
 function move() {
   if (gameOver) return;
@@ -87,17 +97,43 @@ function drawTile(x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, TITLE_SIZE, TITLE_SIZE);
 }
+function drawGrid() {
+  ctx.strokeStyle = "#444"; // Light grid line color
+  ctx.lineWidth = 1;
+
+  // Draw vertical lines
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath();
+    ctx.moveTo(c * TITLE_SIZE, 0);
+    ctx.lineTo(c * TITLE_SIZE, HEIGHT);
+    ctx.stroke();
+  }
+
+  // Draw horizontal lines
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath();
+    ctx.moveTo(0, r * TITLE_SIZE);
+    ctx.lineTo(WIDTH, r * TITLE_SIZE);
+    ctx.stroke();
+  }
+}
+
+
 
 function draw() {
   move();
 
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+  drawGrid(); // ✅ Add the grid here
+
   drawTile(food.x, food.y, "red");
   drawTile(snake.x, snake.y, "plum");
   snakeBody.forEach(t => drawTile(t.x, t.y, "plum"));
 
   ctx.fillStyle = "white";
   ctx.font = "16px Courier New";
+
   if (gameOver) {
     ctx.fillText(`Game Over: ${score}`, WIDTH / 2 - 60, HEIGHT / 2 - 10);
     ctx.fillText("Press 'R' to Restart", WIDTH / 2 - 75, HEIGHT / 2 + 20);
@@ -107,5 +143,6 @@ function draw() {
 
   setTimeout(draw, 100);
 }
+
 
 draw();
