@@ -1,28 +1,50 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+// Base tile size for reference
+const BASE_TITLE_SIZE = 25;
 
-const TITLE_SIZE = 25;
+// Variables for rows and columns (keep same)
 const ROWS = 25;
 const COLS = 25;
-const WIDTH = TITLE_SIZE * COLS;
-const HEIGHT = TITLE_SIZE * ROWS;
 
-let snake = { x: 5 * TITLE_SIZE, y: 5 * TITLE_SIZE };
-let food = randomTile();
-let snakeBody = [];
-let velocityX = 0;
-let velocityY = 0;
-let score = 0;
-let gameOver = false;
+let canvas, ctx;
+let TITLE_SIZE;
+let WIDTH, HEIGHT;
 
+let snake;
+let food;
+let snakeBody;
+let velocityX;
+let velocityY;
+let score;
+let gameOver;
 
+window.onload = () => {
+  canvas = document.getElementById("gameCanvas");
+  ctx = canvas.getContext("2d");
 
+  // Initialize sizes and start game
+  setupCanvasSize();
+  resetGame();
 
-function randomTile() {
-  return {
-    x: Math.floor(Math.random() * COLS) * TITLE_SIZE,
-    y: Math.floor(Math.random() * ROWS) * TITLE_SIZE,
-  };
+  window.addEventListener("resize", () => {
+    setupCanvasSize();
+    resetGame();
+  });
+
+  document.addEventListener("keydown", handleKeyDown);
+
+  draw();
+};
+
+function setupCanvasSize() {
+  // Calculate tile size based on viewport width, max 25 tiles wide
+  // We'll fit the canvas width to 90% viewport width max 600px
+  const maxWidth = Math.min(window.innerWidth * 0.9, 600);
+  TITLE_SIZE = Math.floor(maxWidth / COLS);
+  WIDTH = TITLE_SIZE * COLS;
+  HEIGHT = TITLE_SIZE * ROWS;
+
+  canvas.width = WIDTH;
+  canvas.height = HEIGHT;
 }
 
 function resetGame() {
@@ -35,7 +57,14 @@ function resetGame() {
   gameOver = false;
 }
 
-document.addEventListener("keydown", (e) => {
+function randomTile() {
+  return {
+    x: Math.floor(Math.random() * COLS) * TITLE_SIZE,
+    y: Math.floor(Math.random() * ROWS) * TITLE_SIZE,
+  };
+}
+
+function handleKeyDown(e) {
   const key = e.key;
 
   // Prevent scrolling with arrow keys
@@ -62,8 +91,7 @@ document.addEventListener("keydown", (e) => {
     velocityX = 1;
     velocityY = 0;
   }
-});
-
+}
 
 function move() {
   if (gameOver) return;
@@ -97,6 +125,7 @@ function drawTile(x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, TITLE_SIZE, TITLE_SIZE);
 }
+
 function drawGrid() {
   ctx.strokeStyle = "#444"; // Light grid line color
   ctx.lineWidth = 1;
@@ -118,31 +147,28 @@ function drawGrid() {
   }
 }
 
-
-
 function draw() {
   move();
 
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-  drawGrid(); // ✅ Add the grid here
+  drawGrid();
 
   drawTile(food.x, food.y, "red");
   drawTile(snake.x, snake.y, "plum");
   snakeBody.forEach(t => drawTile(t.x, t.y, "plum"));
 
   ctx.fillStyle = "white";
-  ctx.font = "16px Courier New";
+  ctx.font = `${Math.floor(TITLE_SIZE * 0.6)}px Courier New`;
+  ctx.textAlign = "left";
 
   if (gameOver) {
-    ctx.fillText(`Game Over: ${score}`, WIDTH / 2 - 60, HEIGHT / 2 - 10);
-    ctx.fillText("Press 'R' to Restart", WIDTH / 2 - 75, HEIGHT / 2 + 20);
+    ctx.textAlign = "center";
+    ctx.fillText(`Game Over: ${score}`, WIDTH / 2, HEIGHT / 2 - TITLE_SIZE);
+    ctx.fillText("Press 'R' to Restart", WIDTH / 2, HEIGHT / 2 + TITLE_SIZE);
   } else {
     ctx.fillText(`Score: ${score}`, 10, 20);
   }
 
   setTimeout(draw, 100);
 }
-
-
-draw();
